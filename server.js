@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const connection = require("./dbconfig");
+const connection = require("./config/dbconfig");
+const jwt = require("jsonwebtoken");
+const { secret } = require("./config/config");
 
 const app = express();
 const port = 3000;
@@ -14,14 +16,48 @@ app.listen(port, () => {
 });
 
 // Get all users info
-app.get("/users", (req, res) => {
-  const sql = "SELECT * FROM users_table";
-  connection.query(sql, (err, users) => {
+// app.get("/users", (req, res) => {
+//   const { username, password } = req.body;
+//   const sql = "SELECT * FROM users_table";
+//   connection.query(sql, (err, users) => {
+//     if (err) {
+//       console.error("Error fetching users", err);
+//       res.status(500).json({ error: "Users information is not available " });
+//     } else {
+//       res.status(200).json(users);
+//     }
+//   });
+// });
+
+// Get selected users
+app.get("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  // select user whose username and password matches
+  const sql = "SELECT * FROM users_table WHERE username=? and password=?;";
+
+  // return user data
+  connection.query(sql, [username, password], (err, user) => {
     if (err) {
       console.error("Error fetching users", err);
       res.status(500).json({ error: "Users information is not available " });
     } else {
-      res.status(200).json(users);
+      let token = "";
+      console.log("res", user);
+
+      token = jwt.sign(
+        {
+          id: user.username,
+          created_at: user.created_at,
+        },
+        secret,
+        {
+          expiresIn: 3600, // 1 hour
+        }
+      );
+      res.status(200).json(token);
+
+      console.log("token", token);
     }
   });
 });
