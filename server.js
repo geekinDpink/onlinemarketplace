@@ -144,9 +144,10 @@ app.get("/products/:id", verifyToken, (req, res) => {
 
 // Add new product
 app.post("/products", verifyToken, (req, res) => {
-  const { seller_id, seller_name, item_name, item_desc, price } = req.body;
+  const { seller_id, seller_name, item_name, item_desc, price, img_url } =
+    req.body;
   const sql =
-    "INSERT INTO products_table (seller_id, seller_name, item_name, item_desc, price) VALUES (?, ?, ?, ?, ?)";
+    "INSERT INTO products_table (seller_id, seller_name, item_name, item_desc, price, img_url) VALUES (?, ?, ?, ?, ?)";
   connection.query(
     sql,
     [seller_id, seller_name, item_name, item_desc, price],
