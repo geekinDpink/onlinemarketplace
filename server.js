@@ -146,11 +146,16 @@ app.get("/products/:id", verifyToken, (req, res) => {
 app.post("/products", verifyToken, (req, res) => {
   const { seller_id, seller_name, item_name, item_desc, price, img_url } =
     req.body;
+
+  console.log("req body ", req.body);
+
+  //INSERT INTO `best_online_marketplace`.`products_table` (`id`, `seller_id`, `seller_name`, `item_name`, `item_desc`, `price`) VALUES ('8', '2', 'mary', 'Ruby', 'Beautiful and sparkling', '100');
+
   const sql =
-    "INSERT INTO products_table (seller_id, seller_name, item_name, item_desc, price, img_url) VALUES (?, ?, ?, ?, ?)";
+    "INSERT INTO products_table ( seller_id, seller_name, item_name, item_desc, price, img_url) VALUES ( ?, ?, ?, ?,?,?)";
   connection.query(
     sql,
-    [seller_id, seller_name, item_name, item_desc, price],
+    [seller_id, seller_name, item_name, item_desc, price, img_url],
     (err, result) => {
       if (err) {
         console.error(`Error adding product ${item_name}`, err);
