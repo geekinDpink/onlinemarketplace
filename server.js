@@ -11,7 +11,8 @@ const port = 3001;
 var cors = require("cors");
 
 // Middleware that parses incoming requests body
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "200kb" }));
+app.use(bodyParser.urlencoded({ limit: "200kb", extended: true }));
 
 // TODO add CORS
 app.use(cors());
@@ -65,7 +66,7 @@ app.post("/login", (req, res) => {
           secret,
           {
             expiresIn: 3600, // 1 hour
-          }
+          },
         );
         const theUser = user[0];
         res
@@ -102,7 +103,7 @@ app.post("/register", (req, res) => {
               message: `${username} added successfully`,
             });
           }
-        }
+        },
       );
     })
     // catch error if the password hash isn't successful
@@ -131,6 +132,7 @@ app.get("/products", (req, res) => {
 app.get("/products/:id", verifyToken, (req, res) => {
   const sellerId = req.params.id;
   const sql = "SELECT * FROM products_table WHERE SELLER_ID LIKE ?";
+  // replace like with equal
 
   connection.query(sql, [sellerId], (err, products) => {
     if (err) {
@@ -167,6 +169,6 @@ app.post("/products", verifyToken, (req, res) => {
           message: `${item_name} added successfully`,
         });
       }
-    }
+    },
   );
 });
